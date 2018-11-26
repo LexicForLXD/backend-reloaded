@@ -1,0 +1,22 @@
+scalar Timestamp
+
+type Query {
+  info: Info
+  hosts: [Host]!
+  host(id: String!): Host!
+  users: [User]!
+  user(id: String!): User!
+}
+
+type Mutation {
+  createHost(host: HostReq!): Host!
+  updateHost(id: String!, host: HostReq!): Host!
+  createUser(user: NewUser!): User!
+  # updateUser(id: String!, user: UserReq!): User!
+
+}
+
+
+type Info {
+  version: String!
+}

@@ -1,0 +1,13 @@
+type Host {
+  ID: String!
+  name: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  deletedAt: Timestamp
+}
+
+
+input HostReq {
+  name: String!
+  password: String
+}
