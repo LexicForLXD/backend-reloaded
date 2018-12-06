@@ -19,5 +19,9 @@ models:
     model: gitlab.com/lexicforlxd/backend-reloaded/models.Host
   User:
     model: gitlab.com/lexicforlxd/backend-reloaded/models.User
+  Container:
+    model: github.com/lxc/lxd/shared/api.Container
   Timestamp:
     model: gitlab.com/lexicforlxd/backend-reloaded/models.Timestamp
+  ContainerSource:
+    model: github.com/lxc/lxd/shared/api.ContainerSource
