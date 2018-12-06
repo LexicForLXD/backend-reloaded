@@ -5,17 +5,17 @@ type User {
   birthday: Timestamp
   email: String
   password: String
-  token: String
+  token: String!
   createdAt: Timestamp
   updatedAt: Timestamp
   deletedAt: Timestamp
 }
 
-input NewUser {
+input UserReq {
   name: String!
   firstName: String!
   lastName: String!
   email: String!
-  password: String!
+  password: String
   birthday: Timestamp
 }

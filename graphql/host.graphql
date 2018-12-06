@@ -1,6 +1,9 @@
 type Host {
   ID: String!
   name: String!
+  desc: String
+  address: String!
+  authenticated: Boolean!
   createdAt: Timestamp
   updatedAt: Timestamp
   deletedAt: Timestamp
@@ -9,5 +12,11 @@ type Host {
 
 input HostReq {
   name: String!
+  desc: String
+  address: String!
   password: String
+}
+
+input AuthHostReq {
+  password: String!
 }

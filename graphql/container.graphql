@@ -1,0 +1,30 @@
+type Container {
+  ID: String!
+  host: Host
+  hostID: String!
+  source: ContianerSource
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  deletedAt: Timestamp
+}
+
+input ContainerReq {
+  name: String!
+  hostID: String
+}
+
+type ContianerSource {
+  type: String
+  certificate: String
+  alias: String
+  fingerprint: String
+  properties: [String]
+  server: String
+  secret: String
+  protocol: String
+  source: String
+  live: Boolean
+  containerOnly: Boolean
+  refresh: Boolean
+  project: String
+}
