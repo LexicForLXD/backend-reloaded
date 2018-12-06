@@ -10,8 +10,9 @@ model:
   filename: models/models_gen.go
   package: models
 resolver:
-  filename: resolver.go
+  filename: resolvers/resolver.go
   type: Resolver
+  package: resolvers
 
 models:
   Host:
