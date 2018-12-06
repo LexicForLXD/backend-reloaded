@@ -11,9 +11,9 @@ type Host {
 
 
 input HostReq {
-  name: String!
+  name: String
   desc: String
-  address: String!
+  address: String
   password: String
 }
 

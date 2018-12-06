@@ -37,9 +37,9 @@ type DeleteRes struct {
 }
 
 type HostReq struct {
-	Name     string  `json:"name"`
+	Name     *string `json:"name"`
 	Desc     *string `json:"desc"`
-	Address  string  `json:"address"`
+	Address  *string `json:"address"`
 	Password *string `json:"password"`
 }
 

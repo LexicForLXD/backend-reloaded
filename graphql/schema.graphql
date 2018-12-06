@@ -13,9 +13,9 @@ type Query {
 
 type Mutation {
   createHost(hostReq: HostReq!): Host
-  updateHost(id: String!, hostReq: HostReq!): Host!
-  deleteHost(id: String!): DeleteRes!
-  authHost(id: String!, authReq: AuthHostReq!): Host!
+  updateHost(id: String!, hostReq: HostReq!): Host
+  deleteHost(id: String!): DeleteRes
+  authHost(id: String!, authReq: AuthHostReq!): Host
   createUser(userReq: UserReq!): User!
   updateUser(id: String!, userReq: UserReq!): User!
   deleteUser(id: String!): DeleteRes!

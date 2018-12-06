@@ -41,7 +41,7 @@ func MarshalTimestamp(t time.Time) graphql.Marshaler {
 	})
 }
 
-// Unmarshal{Typename} is only required if the scalar appears as an input. The raw values have already been decoded
+// UnmarshalTimestamp is only required if the scalar appears as an input. The raw values have already been decoded
 // from json into int/float64/bool/nil/map[string]interface/[]interface
 func UnmarshalTimestamp(v interface{}) (time.Time, error) {
 	if tmpStr, ok := v.(int64); ok {

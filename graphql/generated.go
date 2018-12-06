@@ -136,9 +136,9 @@ type ContainerResolver interface {
 }
 type MutationResolver interface {
 	CreateHost(ctx context.Context, hostReq models.HostReq) (*models.Host, error)
-	UpdateHost(ctx context.Context, id string, hostReq models.HostReq) (models.Host, error)
-	DeleteHost(ctx context.Context, id string) (models.DeleteRes, error)
-	AuthHost(ctx context.Context, id string, authReq models.AuthHostReq) (models.Host, error)
+	UpdateHost(ctx context.Context, id string, hostReq models.HostReq) (*models.Host, error)
+	DeleteHost(ctx context.Context, id string) (*models.DeleteRes, error)
+	AuthHost(ctx context.Context, id string, authReq models.AuthHostReq) (*models.Host, error)
 	CreateUser(ctx context.Context, userReq models.UserReq) (models.User, error)
 	UpdateUser(ctx context.Context, id string, userReq models.UserReq) (models.User, error)
 	DeleteUser(ctx context.Context, id string) (models.DeleteRes, error)
@@ -2127,19 +2127,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_createHost(ctx, field)
 		case "updateHost":
 			out.Values[i] = ec._Mutation_updateHost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "deleteHost":
 			out.Values[i] = ec._Mutation_deleteHost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "authHost":
 			out.Values[i] = ec._Mutation_authHost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2238,16 +2229,17 @@ func (ec *executionContext) _Mutation_updateHost(ctx context.Context, field grap
 		return ec.resolvers.Mutation().UpdateHost(rctx, args["id"].(string), args["hostReq"].(models.HostReq))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(models.Host)
+	res := resTmp.(*models.Host)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
-	return ec._Host(ctx, field.Selections, &res)
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Host(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -2272,16 +2264,17 @@ func (ec *executionContext) _Mutation_deleteHost(ctx context.Context, field grap
 		return ec.resolvers.Mutation().DeleteHost(rctx, args["id"].(string))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(models.DeleteRes)
+	res := resTmp.(*models.DeleteRes)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
-	return ec._DeleteRes(ctx, field.Selections, &res)
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._DeleteRes(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -2306,16 +2299,17 @@ func (ec *executionContext) _Mutation_authHost(ctx context.Context, field graphq
 		return ec.resolvers.Mutation().AuthHost(rctx, args["id"].(string), args["authReq"].(models.AuthHostReq))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(models.Host)
+	res := resTmp.(*models.Host)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
-	return ec._Host(ctx, field.Selections, &res)
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Host(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -4826,7 +4820,12 @@ func UnmarshalHostReq(v interface{}) (models.HostReq, error) {
 		switch k {
 		case "name":
 			var err error
-			it.Name, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Name = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
@@ -4843,7 +4842,12 @@ func UnmarshalHostReq(v interface{}) (models.HostReq, error) {
 			}
 		case "address":
 			var err error
-			it.Address, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Address = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
@@ -4989,9 +4993,9 @@ type ContianerSource {
 
 
 input HostReq {
-  name: String!
+  name: String
   desc: String
-  address: String!
+  address: String
   password: String
 }
 
@@ -5013,9 +5017,9 @@ type Query {
 
 type Mutation {
   createHost(hostReq: HostReq!): Host
-  updateHost(id: String!, hostReq: HostReq!): Host!
-  deleteHost(id: String!): DeleteRes!
-  authHost(id: String!, authReq: AuthHostReq!): Host!
+  updateHost(id: String!, hostReq: HostReq!): Host
+  deleteHost(id: String!): DeleteRes
+  authHost(id: String!, authReq: AuthHostReq!): Host
   createUser(userReq: UserReq!): User!
   updateUser(id: String!, userReq: UserReq!): User!
   deleteUser(id: String!): DeleteRes!
