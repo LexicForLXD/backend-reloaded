@@ -2,17 +2,22 @@
 
 
 [[projects]]
-  digest = "1:73d52ad0467263233e26833b71c8bbb4d991c9b59d57a18761ff5c07bbe22f10"
+  branch = "master"
+  digest = "1:cc0bbbf01f9f639555f9a9d4d5ff9c72da4c4c4bfe71f02fd318d37498270d80"
   name = "github.com/99designs/gqlgen"
   packages = [
+    "cmd",
+    "codegen",
+    "codegen/templates",
     "complexity",
     "graphql",
     "graphql/introspection",
     "handler",
+    "internal/gopath",
+    "internal/imports",
   ]
   pruneopts = "UT"
-  revision = "6f486bde038887adf67c3e3766624ef111ea95cf"
-  version = "v0.6.0"
+  revision = "5c870a489da3eecd57b4152f0501b65cd682f4af"
 
 [[projects]]
   digest = "1:cc306cae16c310ca360eaee3e563109e251832a3f6a13b26bf39cc6a43c7c9f6"
@@ -21,6 +26,14 @@
   pruneopts = "UT"
   revision = "834b435c3df04fba060c8d74a40d849ab2c4a090"
   version = "v1.0.1"
+
+[[projects]]
+  digest = "1:236d7e1bdb50d8f68559af37dbcf9d142d56b431c9b2176d41e2a009b664cda8"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9b3b1e0f5f99ae461456d768e7d301a7acdaa2d8"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:7b5c6e2eeaa9ae5907c391a91c132abfd5c9e8a784a341b5625e750c67e6825d"
@@ -42,15 +55,15 @@
   version = "v0.5.0"
 
 [[projects]]
-  digest = "1:6895fbe5a10c5aebd1965cac6f6905dcdb21bee01e08912d3ba6a805c2485f6a"
+  digest = "1:7e63b12cdd7bef2c411d736cb67e28134d39f5d236aa1bfb8f3d55e3ad709eca"
   name = "github.com/jinzhu/gorm"
   packages = [
     ".",
     "dialects/postgres",
   ]
   pruneopts = "UT"
-  revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
-  version = "v1.9.1"
+  revision = "472c70caa40267cb89fd8facb07fe6454b578626"
+  version = "v1.9.2"
 
 [[projects]]
   branch = "master"
@@ -74,7 +87,30 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8124fec00b7f3d03b4971bfa9d5da9f0b03f442dd323d4297abf9a1e6883357d"
+  digest = "1:084ff1e00dad07d10243fd14f19419d5d812ff8a14a4daddf8bc95054baee767"
+  name = "github.com/lxc/lxd"
+  packages = ["shared/api"]
+  pruneopts = "UT"
+  revision = "fba7538d485ef2a9692211d693cfa6e068ff0364"
+
+[[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
+  name = "github.com/urfave/cli"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
+
+[[projects]]
+  digest = "1:ed6a41de3eedd8d4868eea057837860453ebbe08c5e385fd50d4c24e5642ec18"
   name = "github.com/vektah/gqlparser"
   packages = [
     ".",
@@ -86,19 +122,50 @@
     "validator/rules",
   ]
   pruneopts = "UT"
-  revision = "8d495d2fd057d1c734159ee3795905e8f162f78a"
+  revision = "e805d08bb209b1accdea76bd2327811858d81985"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:77f85c12de6b324332e1f11bbd0493e40e8b51fb36a0836f2526be180b9c69f2"
+  name = "golang.org/x/tools"
+  packages = [
+    "go/ast/astutil",
+    "go/buildutil",
+    "go/gcexportdata",
+    "go/internal/cgo",
+    "go/internal/gcimporter",
+    "go/internal/packagesdriver",
+    "go/loader",
+    "go/packages",
+    "go/types/typeutil",
+    "imports",
+    "internal/fastwalk",
+    "internal/gopathwalk",
+    "internal/semver",
+  ]
+  pruneopts = "UT"
+  revision = "537d06c362073e8c95164d0d4709059603cfdb02"
+
+[[projects]]
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/99designs/gqlgen/cmd",
     "github.com/99designs/gqlgen/graphql",
-    "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
+    "github.com/google/uuid",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
-    "github.com/vektah/gqlparser",
-    "github.com/vektah/gqlparser/ast",
+    "github.com/lxc/lxd/shared/api",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
