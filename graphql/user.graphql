@@ -3,7 +3,7 @@ type User {
   firstName: String!
   lastName: String!
   birthday: Timestamp
-  email: String
+  email: String!
   password: String
   token: String!
   createdAt: Timestamp
@@ -12,10 +12,19 @@ type User {
 }
 
 input UserReq {
-  name: String!
   firstName: String!
   lastName: String!
   email: String!
   password: String
+  birthday: Timestamp
+}
+
+input UserUpdate {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  oldPassword: String
+  token: String
   birthday: Timestamp
 }

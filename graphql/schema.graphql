@@ -4,10 +4,10 @@ type Query {
   info: Info
   hosts(limit: Int): [Host]!
   host(id: String!): Host
-  users: [User]!
-  user(id: String!): User!
-  containers(hostID: String): [Container]!
-  container(id: String!): Container!
+  users(limit: Int): [User]!
+  user(id: String!): User
+  containers(hostID: String, limit: Int): [Container]!
+  container(id: String!): Container
 
 }
 
@@ -16,12 +16,12 @@ type Mutation {
   updateHost(id: String!, hostReq: HostReq!): Host
   deleteHost(id: String!): DeleteRes
   authHost(id: String!, authReq: AuthHostReq!): Host
-  createUser(userReq: UserReq!): User!
-  updateUser(id: String!, userReq: UserReq!): User!
-  deleteUser(id: String!): DeleteRes!
-  createContainer(containerReq: ContainerReq!): Container!
-  updateContainer(id: String!, containerReq: ContainerReq!): Container!
-  deleteContainer(id: String!): DeleteRes!
+  createUser(userReq: UserReq!): User
+  updateUser(id: String!, userReq: UserUpdate!): User
+  deleteUser(id: String!): DeleteRes
+  createContainer(containerReq: ContainerReq!): Container
+  updateContainer(id: String!, containerReq: ContainerReq!): Container
+  deleteContainer(id: String!): DeleteRes
 }
 
 
