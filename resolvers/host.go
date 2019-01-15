@@ -1,7 +1,7 @@
 package resolvers
 
 import (
-	context "context"
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -10,7 +10,6 @@ import (
 
 // Mutations
 func (r *mutationResolver) CreateHost(ctx context.Context, hostReq models.HostReq) (*models.Host, error) {
-	// panic("not implemented")
 	host := models.Host{
 		ID:      uuid.New().String(),
 		Name:    *hostReq.Name,

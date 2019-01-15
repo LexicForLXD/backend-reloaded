@@ -1,15 +1,15 @@
 package resolvers
 
 import (
-	context "context"
-	time "time"
+	"context"
+	"time"
 
-	api "github.com/lxc/lxd/shared/api"
-	models "gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lxc/lxd/shared/api"
+	"gitlab.com/lexicforlxd/backend-reloaded/models"
 )
 
 // Mutations
-func (r *mutationResolver) CreateContainer(ctx context.Context, container models.ContainerReq) (api.Container, error) {
+func (r *mutationResolver) CreateContainer(ctx context.Context, container models.ContainerReq) (*api.Container, error) {
 	// c, err := lxd.ConnectLXDUnix("", nil)
 	// if err != nil {
 	// 	return err
@@ -17,18 +17,18 @@ func (r *mutationResolver) CreateContainer(ctx context.Context, container models
 	panic("not implemented")
 
 }
-func (r *mutationResolver) UpdateContainer(ctx context.Context, id string, container models.ContainerReq) (api.Container, error) {
+func (r *mutationResolver) UpdateContainer(ctx context.Context, id string, container models.ContainerReq) (*api.Container, error) {
 	panic("not implemented")
 }
-func (r *mutationResolver) DeleteContainer(ctx context.Context, id string) (models.DeleteRes, error) {
+func (r *mutationResolver) DeleteContainer(ctx context.Context, id string) (*models.DeleteRes, error) {
 	panic("not implemented")
 }
 
 // Queries
-func (r *queryResolver) Containers(ctx context.Context, hostID *string) ([]*api.Container, error) {
+func (r *queryResolver) Containers(ctx context.Context, hostID *string, limit *int) ([]*api.Container, error) {
 	panic("not implemented")
 }
-func (r *queryResolver) Container(ctx context.Context, id string) (api.Container, error) {
+func (r *queryResolver) Container(ctx context.Context, id string) (*api.Container, error) {
 	panic("not implemented")
 }
 
