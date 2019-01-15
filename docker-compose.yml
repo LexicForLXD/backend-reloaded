@@ -1,0 +1,11 @@
+version: '3'
+
+services: 
+  db:
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: lexic
+      POSTGRES_DB: lexic
+    ports:
+      - 5432:5432
