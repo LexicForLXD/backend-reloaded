@@ -3,7 +3,7 @@
 package models
 
 import (
-	time "time"
+	"time"
 )
 
 type AuthHostReq struct {
@@ -48,10 +48,19 @@ type Info struct {
 }
 
 type UserReq struct {
-	Name      string     `json:"name"`
 	FirstName string     `json:"firstName"`
 	LastName  string     `json:"lastName"`
 	Email     string     `json:"email"`
 	Password  *string    `json:"password"`
 	Birthday  *time.Time `json:"birthday"`
+}
+
+type UserUpdate struct {
+	FirstName   *string    `json:"firstName"`
+	LastName    *string    `json:"lastName"`
+	Email       *string    `json:"email"`
+	Password    *string    `json:"password"`
+	OldPassword *string    `json:"oldPassword"`
+	Token       *string    `json:"token"`
+	Birthday    *time.Time `json:"birthday"`
 }
