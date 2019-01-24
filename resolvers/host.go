@@ -55,9 +55,11 @@ func (r *mutationResolver) UpdateHost(ctx context.Context, id string, hostReq mo
 
 }
 func (r *mutationResolver) DeleteHost(ctx context.Context, id string) (*models.DeleteRes, error) {
-	host := models.Host{
-		ID: id,
+	host := models.Host{}
+	if err := r.Db.Where("id = ?", id).First(&host).Error; err != nil {
+		return nil, err
 	}
+
 	if err := r.Db.Delete(&host).Error; err != nil {
 		return nil, err
 	}
