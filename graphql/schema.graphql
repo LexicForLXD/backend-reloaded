@@ -2,28 +2,11 @@ scalar Timestamp
 
 type Query {
   info: Info
-  hosts(limit: Int): [Host]!
-  host(id: String!): Host
-  users(limit: Int): [User]!
-  user(id: String!): User
-  containers(hostID: String, limit: Int): [Container]!
-  container(id: String!): Container
-
 }
 
 type Mutation {
-  createHost(hostReq: HostReq!): Host
-  updateHost(id: String!, hostReq: HostReq!): Host
-  deleteHost(id: String!): DeleteRes
-  authHost(id: String!, authReq: AuthHostReq!): Host
-  createUser(userReq: UserReq!): User
-  updateUser(id: String!, userReq: UserUpdate!): User
-  deleteUser(id: String!): DeleteRes
-  createContainer(containerReq: ContainerReq!): Container
-  updateContainer(id: String!, containerReq: ContainerReq!): Container
-  deleteContainer(id: String!): DeleteRes
+  info: Info
 }
-
 
 type Info {
   version: String!

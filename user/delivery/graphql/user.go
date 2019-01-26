@@ -1,16 +1,27 @@
-package resolvers
+package graphql
 
 import (
 	"context"
 
 	"github.com/google/uuid"
 	"github.com/vektah/gqlparser/gqlerror"
+	"gitlab.com/lexicforlxd/backend-reloaded/host"
 	"gitlab.com/lexicforlxd/backend-reloaded/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserResolver struct {
+}
+
+func NewUserResolver(h host.Usecase) UserResolver {
+	resolver := UserResolver{
+		// hostUsecase: h,
+	}
+	return resolver
+}
+
 // Mutations
-func (r *mutationResolver) CreateUser(ctx context.Context, userReq models.UserReq) (*models.User, error) {
+func (r *UserResolver) CreateUser(ctx context.Context, userReq models.UserReq) (*models.User, error) {
 	user := models.User{
 		ID:        uuid.New().String(),
 		FirstName: userReq.FirstName,
@@ -35,18 +46,18 @@ func (r *mutationResolver) CreateUser(ctx context.Context, userReq models.UserRe
 		user.Password = string(hashedPass)
 	}
 
-	if err := r.Db.Create(&user).Error; err != nil {
-		return nil, err
-	}
+	// if err := r.db.Create(&user).Error; err != nil {
+	// 	return nil, err
+	// }
 
 	return &user, nil
 }
 
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, userUpdate models.UserUpdate) (*models.User, error) {
+func (r *UserResolver) UpdateUser(ctx context.Context, id string, userUpdate models.UserUpdate) (*models.User, error) {
 	user := models.User{}
-	if err := r.Db.Where("id = ?", id).First(&user).Error; err != nil {
-		return nil, err
-	}
+	// if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
+	// 	return nil, err
+	// }
 
 	if userUpdate.FirstName != nil {
 		user.FirstName = *userUpdate.FirstName
@@ -80,38 +91,38 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, userUpdate
 
 	}
 
-	if err := r.Db.Save(&user).Error; err != nil {
-		return nil, err
-	}
+	// if err := r.db.Save(&user).Error; err != nil {
+	// 	return nil, err
+	// }
 
 	return &user, nil
 }
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*models.DeleteRes, error) {
+func (r *UserResolver) DeleteUser(ctx context.Context, id string) (*models.DeleteRes, error) {
 	panic("not implemented")
 }
 
 // Queries
 
-func (r *queryResolver) Users(ctx context.Context, limit *int) ([]*models.User, error) {
+func (r *UserResolver) Users(ctx context.Context, limit *int) ([]*models.User, error) {
 	var users []*models.User
 
 	if limit != nil {
-		if err := r.Db.Limit(*limit).Find(&users).Error; err != nil {
-			return nil, err
-		}
+		// if err := r.db.Limit(*limit).Find(&users).Error; err != nil {
+		// 	return nil, err
+		// }
 	} else {
-		if err := r.Db.Find(&users).Error; err != nil {
-			return nil, err
-		}
+		// if err := r.db.Find(&users).Error; err != nil {
+		// 	return nil, err
+		// }
 	}
 
 	return users, nil
 }
-func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
+func (r *UserResolver) User(ctx context.Context, id string) (*models.User, error) {
 	user := models.User{}
-	if err := r.Db.Where("id = ?", id).First(&user).Error; err != nil {
-		return nil, err
-	}
+	// if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
+	// 	return nil, err
+	// }
 
 	return &user, nil
 }

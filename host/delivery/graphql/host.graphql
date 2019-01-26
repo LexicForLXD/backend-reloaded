@@ -9,7 +9,6 @@ type Host {
   deletedAt: Timestamp
 }
 
-
 input HostReq {
   name: String
   desc: String
@@ -19,4 +18,16 @@ input HostReq {
 
 input AuthHostReq {
   password: String!
+}
+
+extend type Query {
+  hosts(limit: Int, offset: Int): [Host]!
+  host(id: String!): Host
+}
+
+extend type Mutation {
+  createHost(hostReq: HostReq!): Host
+  updateHost(id: String!, hostReq: HostReq!): Host
+  deleteHost(id: String!): DeleteRes
+  authHost(id: String!, authReq: AuthHostReq!): Host
 }

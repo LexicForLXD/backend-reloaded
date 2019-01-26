@@ -90,6 +90,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		Infos           func(childComplexity int) int
+		CreateContainer func(childComplexity int, containerReq models.ContainerReq) int
+		UpdateContainer func(childComplexity int, id string, containerReq models.ContainerReq) int
+		DeleteContainer func(childComplexity int, id string) int
 		CreateHost      func(childComplexity int, hostReq models.HostReq) int
 		UpdateHost      func(childComplexity int, id string, hostReq models.HostReq) int
 		DeleteHost      func(childComplexity int, id string) int
@@ -97,19 +101,16 @@ type ComplexityRoot struct {
 		CreateUser      func(childComplexity int, userReq models.UserReq) int
 		UpdateUser      func(childComplexity int, id string, userReq models.UserUpdate) int
 		DeleteUser      func(childComplexity int, id string) int
-		CreateContainer func(childComplexity int, containerReq models.ContainerReq) int
-		UpdateContainer func(childComplexity int, id string, containerReq models.ContainerReq) int
-		DeleteContainer func(childComplexity int, id string) int
 	}
 
 	Query struct {
 		Info       func(childComplexity int) int
-		Hosts      func(childComplexity int, limit *int) int
+		Containers func(childComplexity int, hostID *string, limit *int, offset *int) int
+		Container  func(childComplexity int, id string) int
+		Hosts      func(childComplexity int, limit *int, offset *int) int
 		Host       func(childComplexity int, id string) int
 		Users      func(childComplexity int, limit *int) int
 		User       func(childComplexity int, id string) int
-		Containers func(childComplexity int, hostID *string, limit *int) int
-		Container  func(childComplexity int, id string) int
 	}
 
 	User struct {
@@ -136,6 +137,10 @@ type ContainerResolver interface {
 	DeletedAt(ctx context.Context, obj *api.Container) (*time.Time, error)
 }
 type MutationResolver interface {
+	Infos(ctx context.Context) (*models.Info, error)
+	CreateContainer(ctx context.Context, containerReq models.ContainerReq) (*api.Container, error)
+	UpdateContainer(ctx context.Context, id string, containerReq models.ContainerReq) (*api.Container, error)
+	DeleteContainer(ctx context.Context, id string) (*models.DeleteRes, error)
 	CreateHost(ctx context.Context, hostReq models.HostReq) (*models.Host, error)
 	UpdateHost(ctx context.Context, id string, hostReq models.HostReq) (*models.Host, error)
 	DeleteHost(ctx context.Context, id string) (*models.DeleteRes, error)
@@ -143,18 +148,69 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, userReq models.UserReq) (*models.User, error)
 	UpdateUser(ctx context.Context, id string, userReq models.UserUpdate) (*models.User, error)
 	DeleteUser(ctx context.Context, id string) (*models.DeleteRes, error)
-	CreateContainer(ctx context.Context, containerReq models.ContainerReq) (*api.Container, error)
-	UpdateContainer(ctx context.Context, id string, containerReq models.ContainerReq) (*api.Container, error)
-	DeleteContainer(ctx context.Context, id string) (*models.DeleteRes, error)
 }
 type QueryResolver interface {
 	Info(ctx context.Context) (*models.Info, error)
-	Hosts(ctx context.Context, limit *int) ([]*models.Host, error)
+	Containers(ctx context.Context, hostID *string, limit *int, offset *int) ([]*api.Container, error)
+	Container(ctx context.Context, id string) (*api.Container, error)
+	Hosts(ctx context.Context, limit *int, offset *int) ([]*models.Host, error)
 	Host(ctx context.Context, id string) (*models.Host, error)
 	Users(ctx context.Context, limit *int) ([]*models.User, error)
 	User(ctx context.Context, id string) (*models.User, error)
-	Containers(ctx context.Context, hostID *string, limit *int) ([]*api.Container, error)
-	Container(ctx context.Context, id string) (*api.Container, error)
+}
+
+func field_Mutation_createContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 models.ContainerReq
+	if tmp, ok := rawArgs["containerReq"]; ok {
+		var err error
+		arg0, err = UnmarshalContainerReq(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["containerReq"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_updateContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 models.ContainerReq
+	if tmp, ok := rawArgs["containerReq"]; ok {
+		var err error
+		arg1, err = UnmarshalContainerReq(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["containerReq"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_deleteContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
 }
 
 func field_Mutation_createHost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -289,46 +345,55 @@ func field_Mutation_deleteUser_args(rawArgs map[string]interface{}) (map[string]
 
 }
 
-func field_Mutation_createContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func field_Query_containers_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 models.ContainerReq
-	if tmp, ok := rawArgs["containerReq"]; ok {
+	var arg0 *string
+	if tmp, ok := rawArgs["hostID"]; ok {
 		var err error
-		arg0, err = UnmarshalContainerReq(tmp)
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalString(tmp)
+			arg0 = &ptr1
+		}
+
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["containerReq"] = arg0
+	args["hostID"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg2
 	return args, nil
 
 }
 
-func field_Mutation_updateContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalString(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 models.ContainerReq
-	if tmp, ok := rawArgs["containerReq"]; ok {
-		var err error
-		arg1, err = UnmarshalContainerReq(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["containerReq"] = arg1
-	return args, nil
-
-}
-
-func field_Mutation_deleteContainer_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func field_Query_container_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
@@ -359,6 +424,20 @@ func field_Query_hosts_args(rawArgs map[string]interface{}) (map[string]interfac
 		}
 	}
 	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
 	return args, nil
 
 }
@@ -399,55 +478,6 @@ func field_Query_users_args(rawArgs map[string]interface{}) (map[string]interfac
 }
 
 func field_Query_user_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalString(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-
-}
-
-func field_Query_containers_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["hostID"]; ok {
-		var err error
-		var ptr1 string
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalString(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["hostID"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg1
-	return args, nil
-
-}
-
-func field_Query_container_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
@@ -737,6 +767,49 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Info.Version(childComplexity), true
 
+	case "Mutation.infos":
+		if e.complexity.Mutation.Infos == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Infos(childComplexity), true
+
+	case "Mutation.createContainer":
+		if e.complexity.Mutation.CreateContainer == nil {
+			break
+		}
+
+		args, err := field_Mutation_createContainer_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateContainer(childComplexity, args["containerReq"].(models.ContainerReq)), true
+
+	case "Mutation.updateContainer":
+		if e.complexity.Mutation.UpdateContainer == nil {
+			break
+		}
+
+		args, err := field_Mutation_updateContainer_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateContainer(childComplexity, args["id"].(string), args["containerReq"].(models.ContainerReq)), true
+
+	case "Mutation.deleteContainer":
+		if e.complexity.Mutation.DeleteContainer == nil {
+			break
+		}
+
+		args, err := field_Mutation_deleteContainer_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteContainer(childComplexity, args["id"].(string)), true
+
 	case "Mutation.createHost":
 		if e.complexity.Mutation.CreateHost == nil {
 			break
@@ -821,48 +894,36 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 
-	case "Mutation.createContainer":
-		if e.complexity.Mutation.CreateContainer == nil {
-			break
-		}
-
-		args, err := field_Mutation_createContainer_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateContainer(childComplexity, args["containerReq"].(models.ContainerReq)), true
-
-	case "Mutation.updateContainer":
-		if e.complexity.Mutation.UpdateContainer == nil {
-			break
-		}
-
-		args, err := field_Mutation_updateContainer_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateContainer(childComplexity, args["id"].(string), args["containerReq"].(models.ContainerReq)), true
-
-	case "Mutation.deleteContainer":
-		if e.complexity.Mutation.DeleteContainer == nil {
-			break
-		}
-
-		args, err := field_Mutation_deleteContainer_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteContainer(childComplexity, args["id"].(string)), true
-
 	case "Query.info":
 		if e.complexity.Query.Info == nil {
 			break
 		}
 
 		return e.complexity.Query.Info(childComplexity), true
+
+	case "Query.containers":
+		if e.complexity.Query.Containers == nil {
+			break
+		}
+
+		args, err := field_Query_containers_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Containers(childComplexity, args["hostID"].(*string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.container":
+		if e.complexity.Query.Container == nil {
+			break
+		}
+
+		args, err := field_Query_container_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Container(childComplexity, args["id"].(string)), true
 
 	case "Query.hosts":
 		if e.complexity.Query.Hosts == nil {
@@ -874,7 +935,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Hosts(childComplexity, args["limit"].(*int)), true
+		return e.complexity.Query.Hosts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Query.host":
 		if e.complexity.Query.Host == nil {
@@ -911,30 +972,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
-
-	case "Query.containers":
-		if e.complexity.Query.Containers == nil {
-			break
-		}
-
-		args, err := field_Query_containers_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Containers(childComplexity, args["hostID"].(*string), args["limit"].(*int)), true
-
-	case "Query.container":
-		if e.complexity.Query.Container == nil {
-			break
-		}
-
-		args, err := field_Query_container_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Container(childComplexity, args["id"].(string)), true
 
 	case "User.ID":
 		if e.complexity.User.Id == nil {
@@ -2163,6 +2200,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "infos":
+			out.Values[i] = ec._Mutation_infos(ctx, field)
+		case "createContainer":
+			out.Values[i] = ec._Mutation_createContainer(ctx, field)
+		case "updateContainer":
+			out.Values[i] = ec._Mutation_updateContainer(ctx, field)
+		case "deleteContainer":
+			out.Values[i] = ec._Mutation_deleteContainer(ctx, field)
 		case "createHost":
 			out.Values[i] = ec._Mutation_createHost(ctx, field)
 		case "updateHost":
@@ -2177,12 +2222,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_updateUser(ctx, field)
 		case "deleteUser":
 			out.Values[i] = ec._Mutation_deleteUser(ctx, field)
-		case "createContainer":
-			out.Values[i] = ec._Mutation_createContainer(ctx, field)
-		case "updateContainer":
-			out.Values[i] = ec._Mutation_updateContainer(ctx, field)
-		case "deleteContainer":
-			out.Values[i] = ec._Mutation_deleteContainer(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2192,6 +2231,140 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_infos(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Infos(rctx)
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Info)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Info(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_createContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createContainer_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateContainer(rctx, args["containerReq"].(models.ContainerReq))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Container)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Container(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_updateContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_updateContainer_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateContainer(rctx, args["id"].(string), args["containerReq"].(models.ContainerReq))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Container)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Container(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_deleteContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_deleteContainer_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteContainer(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.DeleteRes)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._DeleteRes(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -2439,111 +2612,6 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	return ec._DeleteRes(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_createContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_createContainer_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateContainer(rctx, args["containerReq"].(models.ContainerReq))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*api.Container)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Container(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_updateContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_updateContainer_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateContainer(rctx, args["id"].(string), args["containerReq"].(models.ContainerReq))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*api.Container)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Container(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_deleteContainer(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_deleteContainer_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteContainer(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*models.DeleteRes)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._DeleteRes(ctx, field.Selections, res)
-}
-
 var queryImplementors = []string{"Query"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -2567,6 +2635,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
 				out.Values[i] = ec._Query_info(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "containers":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_containers(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "container":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_container(ctx, field)
 				wg.Done()
 			}(i, field)
 		case "hosts":
@@ -2597,21 +2680,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
 				out.Values[i] = ec._Query_user(ctx, field)
-				wg.Done()
-			}(i, field)
-		case "containers":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_containers(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
-		case "container":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_container(ctx, field)
 				wg.Done()
 			}(i, field)
 		case "__type":
@@ -2659,6 +2727,111 @@ func (ec *executionContext) _Query_info(ctx context.Context, field graphql.Colle
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Query_containers(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_containers_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Containers(rctx, args["hostID"].(*string), args["limit"].(*int), args["offset"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*api.Container)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Container(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_container(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_container_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Container(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*api.Container)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Container(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Query_hosts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -2677,7 +2850,7 @@ func (ec *executionContext) _Query_hosts(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Hosts(rctx, args["limit"].(*int))
+		return ec.resolvers.Query().Hosts(rctx, args["limit"].(*int), args["offset"].(*int))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -2866,111 +3039,6 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}
 
 	return ec._User(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_containers(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_containers_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Containers(rctx, args["hostID"].(*string), args["limit"].(*int))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*api.Container)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Container(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_container(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_container_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Container(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*api.Container)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Container(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -5075,7 +5143,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var parsedSchema = gqlparser.MustLoadSchema(
-	&ast.Source{Name: "graphql/container.graphql", Input: `type Container {
+	&ast.Source{Name: "container/delivery/graphql/container.graphql", Input: `type Container {
   ID: String!
   host: Host
   hostID: String!
@@ -5104,8 +5172,39 @@ type ContianerSource {
   containerOnly: Boolean
   refresh: Boolean
   project: String
-}`},
-	&ast.Source{Name: "graphql/host.graphql", Input: `type Host {
+}
+
+extend type Query {
+  containers(hostID: String, limit: Int, offset: Int): [Container]!
+  container(id: String!): Container
+}
+
+extend type Mutation {
+  createContainer(containerReq: ContainerReq!): Container
+  updateContainer(id: String!, containerReq: ContainerReq!): Container
+  deleteContainer(id: String!): DeleteRes
+}
+`},
+	&ast.Source{Name: "graphql/schema.graphql", Input: `scalar Timestamp
+
+type Query {
+  info: Info
+}
+
+type Mutation {
+  infos: Info
+}
+
+type Info {
+  version: String!
+}
+
+type DeleteRes {
+  message: String!
+  entity: String!
+}
+`},
+	&ast.Source{Name: "host/delivery/graphql/host.graphql", Input: `type Host {
   ID: String!
   name: String!
   desc: String
@@ -5116,7 +5215,6 @@ type ContianerSource {
   deletedAt: Timestamp
 }
 
-
 input HostReq {
   name: String
   desc: String
@@ -5126,43 +5224,21 @@ input HostReq {
 
 input AuthHostReq {
   password: String!
-}`},
-	&ast.Source{Name: "graphql/schema.graphql", Input: `scalar Timestamp
-
-type Query {
-  info: Info
-  hosts(limit: Int): [Host]!
-  host(id: String!): Host
-  users(limit: Int): [User]!
-  user(id: String!): User
-  containers(hostID: String, limit: Int): [Container]!
-  container(id: String!): Container
-
 }
 
-type Mutation {
+extend type Query {
+  hosts(limit: Int, offset: Int): [Host]!
+  host(id: String!): Host
+}
+
+extend type Mutation {
   createHost(hostReq: HostReq!): Host
   updateHost(id: String!, hostReq: HostReq!): Host
   deleteHost(id: String!): DeleteRes
   authHost(id: String!, authReq: AuthHostReq!): Host
-  createUser(userReq: UserReq!): User
-  updateUser(id: String!, userReq: UserUpdate!): User
-  deleteUser(id: String!): DeleteRes
-  createContainer(containerReq: ContainerReq!): Container
-  updateContainer(id: String!, containerReq: ContainerReq!): Container
-  deleteContainer(id: String!): DeleteRes
 }
-
-
-type Info {
-  version: String!
-}
-
-type DeleteRes {
-  message: String!
-  entity: String!
-}`},
-	&ast.Source{Name: "graphql/user.graphql", Input: `type User {
+`},
+	&ast.Source{Name: "user/delivery/graphql/user.graphql", Input: `type User {
   ID: String!
   firstName: String!
   lastName: String!
@@ -5191,6 +5267,17 @@ input UserUpdate {
   oldPassword: String
   token: String
   birthday: Timestamp
+}
+
+extend type Query {
+  users(limit: Int): [User]!
+  user(id: String!): User
+}
+
+extend type Mutation {
+  createUser(userReq: UserReq!): User
+  updateUser(id: String!, userReq: UserUpdate!): User
+  deleteUser(id: String!): DeleteRes
 }
 `},
 )

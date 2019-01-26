@@ -28,3 +28,14 @@ type ContianerSource {
   refresh: Boolean
   project: String
 }
+
+extend type Query {
+  containers(hostID: String, limit: Int, offset: Int): [Container]!
+  container(id: String!): Container
+}
+
+extend type Mutation {
+  createContainer(containerReq: ContainerReq!): Container
+  updateContainer(id: String!, containerReq: ContainerReq!): Container
+  deleteContainer(id: String!): DeleteRes
+}

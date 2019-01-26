@@ -1,33 +1,27 @@
 package resolvers
 
 import (
-	"context"
-
-	"github.com/jinzhu/gorm"
 	"gitlab.com/lexicforlxd/backend-reloaded/graphql"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"gitlab.com/lexicforlxd/backend-reloaded/host"
 )
 
 type Resolver struct {
-	Db *gorm.DB
+	HostUsecase host.Usecase
+}
+
+func NewResolver(h host.Usecase) graphql.ResolverRoot {
+	resolver := &Resolver{
+		HostUsecase: h,
+	}
+	return resolver
 }
 
 func (r *Resolver) Container() graphql.ContainerResolver {
-	return &containerResolver{r}
+	return &container{}
 }
 func (r *Resolver) Mutation() graphql.MutationResolver {
-	return &mutationResolver{r}
+	return newMutation(r.HostUsecase)
 }
 func (r *Resolver) Query() graphql.QueryResolver {
-	return &queryResolver{r}
-}
-
-type containerResolver struct{ *Resolver }
-
-type mutationResolver struct{ *Resolver }
-
-type queryResolver struct{ *Resolver }
-
-func (r *queryResolver) Info(ctx context.Context) (*models.Info, error) {
-	panic("not implemented")
+	return newQuery(r.HostUsecase)
 }

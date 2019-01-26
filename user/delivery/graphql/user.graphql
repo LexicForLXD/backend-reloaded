@@ -28,3 +28,14 @@ input UserUpdate {
   token: String
   birthday: Timestamp
 }
+
+extend type Query {
+  users(limit: Int): [User]!
+  user(id: String!): User
+}
+
+extend type Mutation {
+  createUser(userReq: UserReq!): User
+  updateUser(id: String!, userReq: UserUpdate!): User
+  deleteUser(id: String!): DeleteRes
+}

@@ -3,7 +3,9 @@
 # Refer to https://gqlgen.com/config/
 # for detailed .gqlgen.yml documentation.
 
-schema: "graphql/*.graphql"
+schema:
+  - "graphql/*.graphql"
+  - "*/delivery/graphql/*.graphql"
 exec:
   filename: graphql/generated.go
 model:
