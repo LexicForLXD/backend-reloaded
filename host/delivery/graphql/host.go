@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type HostResolver struct {

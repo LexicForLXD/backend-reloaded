@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type hostUsecase struct {

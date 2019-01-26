@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/jinzhu/gorm"
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type hostRepository struct {

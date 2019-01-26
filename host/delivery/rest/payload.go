@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/render"
 
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type HostPayload struct {

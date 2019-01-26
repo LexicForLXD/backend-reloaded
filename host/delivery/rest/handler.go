@@ -9,9 +9,9 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
-	_restUtil "gitlab.com/lexicforlxd/backend-reloaded/util/delivery/rest"
+	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/models"
+	_restUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/rest"
 )
 
 // ResponseError represent the reseponse error struct

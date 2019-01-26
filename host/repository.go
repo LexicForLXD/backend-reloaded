@@ -3,7 +3,7 @@ package host
 import (
 	"context"
 
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type Repository interface {

@@ -1,7 +1,7 @@
 package resolvers
 
 import (
-	_container "gitlab.com/lexicforlxd/backend-reloaded/container/delivery/graphql"
+	_container "github.com/lexicforlxd/backend-reloaded/container/delivery/graphql"
 )
 
 type container struct {

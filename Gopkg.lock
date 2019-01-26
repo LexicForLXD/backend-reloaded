@@ -235,6 +235,7 @@
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
     "github.com/lxc/lxd/shared/api",
+    "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",

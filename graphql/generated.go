@@ -15,7 +15,7 @@ import (
 	"github.com/lxc/lxd/shared/api"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.

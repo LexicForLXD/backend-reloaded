@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/lexicforlxd/backend-reloaded/host/mocks"
-	ucase "gitlab.com/lexicforlxd/backend-reloaded/host/usecase"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
+	"github.com/lexicforlxd/backend-reloaded/host/mocks"
+	ucase "github.com/lexicforlxd/backend-reloaded/host/usecase"
+	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 func TestGetByID(t *testing.T) {

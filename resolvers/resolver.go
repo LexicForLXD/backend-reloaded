@@ -1,8 +1,8 @@
 package resolvers
 
 import (
-	"gitlab.com/lexicforlxd/backend-reloaded/graphql"
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/graphql"
+	"github.com/lexicforlxd/backend-reloaded/host"
 )
 
 type Resolver struct {

@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/models"
 	"github.com/vektah/gqlparser/gqlerror"
-	"gitlab.com/lexicforlxd/backend-reloaded/host"
-	"gitlab.com/lexicforlxd/backend-reloaded/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
