@@ -12,6 +12,7 @@ jobs:
       services:
         - postgresql
       before_install:
+        - cp .env.travis .env
         # Download the binary to bin folder in $GOPATH
         - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
         # Make the binary executable
@@ -20,6 +21,5 @@ jobs:
         - make prepare
       before_script:
         - psql -c 'create database travis_lexic_test;' -U postgres
-        - cp .env.travis .env
       script:
         - make test
