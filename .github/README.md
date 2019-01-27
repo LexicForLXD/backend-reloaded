@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/LexicForLXD/backend-reloaded.svg?branch=master)](https://travis-ci.com/LexicForLXD/backend-reloaded)
+
 # backend-reloaded
 
 ## Not ready for production
