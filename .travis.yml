@@ -20,5 +20,6 @@ jobs:
         - make prepare
       before_script:
         - psql -c 'create database travis_lexic_test;' -U postgres
+        - cp .env.travis .env
       script:
         - make test
