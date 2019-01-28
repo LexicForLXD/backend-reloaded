@@ -1,4 +1,4 @@
-package usecase_test
+package usecase
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/lexicforlxd/backend-reloaded/host/mocks"
-	ucase "github.com/lexicforlxd/backend-reloaded/host/usecase"
+	// ucase "github.com/lexicforlxd/backend-reloaded/host/usecase"
 	"github.com/lexicforlxd/backend-reloaded/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -22,7 +22,7 @@ func TestGetByID(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		a, err := u.GetByID(context.TODO(), mockHost.ID)
 
@@ -32,7 +32,7 @@ func TestGetByID(t *testing.T) {
 	t.Run("error-failed", func(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("Unexpected")).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		a, err := u.GetByID(context.TODO(), mockHost.ID)
 
@@ -60,7 +60,7 @@ func TestStore(t *testing.T) {
 		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
 		mockHostRepo.On("Store", mock.Anything, mock.AnythingOfType("*models.Host")).Return(nil).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Store(context.TODO(), &tempMockHost)
 
@@ -77,7 +77,7 @@ func TestStore(t *testing.T) {
 		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
 		mockHostRepo.On("Store", mock.Anything, mock.AnythingOfType("*models.Host")).Return(nil).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Store(context.TODO(), &tempMockHost)
 
@@ -88,7 +88,7 @@ func TestStore(t *testing.T) {
 
 	t.Run("failing existing address", func(t *testing.T) {
 		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Store(context.TODO(), &mockHost)
 
@@ -99,7 +99,7 @@ func TestStore(t *testing.T) {
 	t.Run("failing existing name", func(t *testing.T) {
 		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
 		mockHostRepo.On("GetByName", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Store(context.TODO(), &mockHost)
 
@@ -128,7 +128,7 @@ func TestUpdate(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&tempMockHost, nil).Once()
 		mockHostRepo.On("Update", mock.Anything, mock.AnythingOfType("*models.Host")).Return(nil).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Update(context.TODO(), &tempMockHost)
 
@@ -140,7 +140,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("not-found", func(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("not found")).Once()
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 		h, err := u.Update(context.TODO(), &mockHost)
 
 		assert.Error(t, err)
@@ -163,7 +163,7 @@ func TestDelete(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
 		mockHostRepo.On("Delete", mock.Anything, mock.AnythingOfType("string")).Return(nil).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 		err := u.Delete(context.TODO(), "asuidgz")
 
 		assert.NoError(t, err)
@@ -172,7 +172,7 @@ func TestDelete(t *testing.T) {
 	t.Run("not-found", func(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("not found")).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 		err := u.Delete(context.TODO(), "asuidgz")
 
 		assert.Error(t, err)
@@ -198,7 +198,7 @@ func TestFetch(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockHostRepo.On("Fetch", mock.Anything, mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(mockHosts, nil).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 		h, err := u.Fetch(context.TODO(), -1, -1)
 
 		assert.NotNil(t, h)
@@ -208,7 +208,7 @@ func TestFetch(t *testing.T) {
 	t.Run("empty-db", func(t *testing.T) {
 		mockHostRepo.On("Fetch", mock.Anything, mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(nil, errors.New("no hosts")).Once()
 
-		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+		u := NewHostUsecase(mockHostRepo, time.Second*2)
 		h, err := u.Fetch(context.TODO(), -1, -1)
 
 		assert.Nil(t, h)
