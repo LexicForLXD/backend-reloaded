@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -24,6 +25,14 @@ func NewHostUsecase(h host.Repository, timeout time.Duration) host.Usecase {
 }
 
 func (h *hostUsecase) Store(ctx context.Context, host *models.Host) (*models.Host, error) {
+
+	if host, _ := h.hostRepo.GetByAddress(ctx, host.Address); host != nil {
+		return nil, errors.New("Host with same address already in database")
+	}
+	if host, _ := h.hostRepo.GetByName(ctx, host.Name); host != nil {
+		return nil, errors.New("Host with same name already in database")
+	}
+
 	if host.Password != "" {
 		fmt.Println("auth with lxd")
 	}
