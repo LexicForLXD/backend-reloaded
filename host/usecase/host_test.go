@@ -28,8 +28,6 @@ func TestGetByID(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
-
-		mockHostRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("Unexpected")).Once()
@@ -40,7 +38,9 @@ func TestGetByID(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Nil(t, a)
+	})
 
+	t.Run("assert mock", func(t *testing.T) {
 		mockHostRepo.AssertExpectations(t)
 	})
 
@@ -53,10 +53,11 @@ func TestStore(t *testing.T) {
 		Address: "Content",
 	}
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("success without password", func(t *testing.T) {
 		tempMockHost := mockHost
-		tempMockHost.ID = "adhfgasjklsjb"
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&tempMockHost, nil).Once()
+		mockHostRepo.On("GetByName", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
+		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
 		mockHostRepo.On("Store", mock.Anything, mock.AnythingOfType("*models.Host")).Return(nil).Once()
 
 		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
@@ -66,18 +67,47 @@ func TestStore(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, h)
 		assert.Equal(t, mockHost.Name, h.Name)
-		mockHostRepo.AssertExpectations(t)
 	})
-	t.Run("existing", func(t *testing.T) {
-		// existingHost := mockHost
-		// mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&existingHost, nil).Once()
-		mockHostRepo.On("Store", mock.Anything, mock.AnythingOfType("*models.Host")).Return(errors.New("error")).Once()
+
+	t.Run("success with password", func(t *testing.T) {
+		tempMockHost := mockHost
+		tempMockHost.Password = "password"
+		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&tempMockHost, nil).Once()
+		mockHostRepo.On("GetByName", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
+		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
+		mockHostRepo.On("Store", mock.Anything, mock.AnythingOfType("*models.Host")).Return(nil).Once()
+
+		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+
+		h, err := u.Store(context.TODO(), &tempMockHost)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, h)
+		assert.Equal(t, mockHost.Name, h.Name)
+	})
+
+	t.Run("failing existing address", func(t *testing.T) {
+		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
 		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
 
 		h, err := u.Store(context.TODO(), &mockHost)
 
 		assert.Nil(t, h)
 		assert.Error(t, err)
+	})
+
+	t.Run("failing existing name", func(t *testing.T) {
+		mockHostRepo.On("GetByAddress", mock.Anything, mock.AnythingOfType("string")).Return(nil, errors.New("error")).Once()
+		mockHostRepo.On("GetByName", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
+		u := ucase.NewHostUsecase(mockHostRepo, time.Second*2)
+
+		h, err := u.Store(context.TODO(), &mockHost)
+
+		assert.Nil(t, h)
+		assert.Error(t, err)
+	})
+
+	t.Run("assert mock", func(t *testing.T) {
 		mockHostRepo.AssertExpectations(t)
 	})
 }
@@ -106,7 +136,6 @@ func TestUpdate(t *testing.T) {
 		assert.NotNil(t, h)
 		assert.NotEqual(t, mockHost.Name, h.Name)
 		assert.Equal(t, tempMockHost.Name, h.Name)
-		mockHostRepo.AssertExpectations(t)
 	})
 
 	t.Run("not-found", func(t *testing.T) {
@@ -116,6 +145,9 @@ func TestUpdate(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Nil(t, h)
+	})
+
+	t.Run("assert mock", func(t *testing.T) {
 		mockHostRepo.AssertExpectations(t)
 	})
 }
@@ -135,7 +167,6 @@ func TestDelete(t *testing.T) {
 		err := u.Delete(context.TODO(), "asuidgz")
 
 		assert.NoError(t, err)
-		mockHostRepo.AssertExpectations(t)
 	})
 
 	t.Run("not-found", func(t *testing.T) {
@@ -145,6 +176,9 @@ func TestDelete(t *testing.T) {
 		err := u.Delete(context.TODO(), "asuidgz")
 
 		assert.Error(t, err)
+	})
+
+	t.Run("assert mock", func(t *testing.T) {
 		mockHostRepo.AssertExpectations(t)
 	})
 
@@ -169,7 +203,6 @@ func TestFetch(t *testing.T) {
 
 		assert.NotNil(t, h)
 		assert.NoError(t, err)
-		mockHostRepo.AssertExpectations(t)
 	})
 
 	t.Run("empty-db", func(t *testing.T) {
@@ -180,6 +213,9 @@ func TestFetch(t *testing.T) {
 
 		assert.Nil(t, h)
 		assert.Error(t, err)
+	})
+
+	t.Run("assert mock", func(t *testing.T) {
 		mockHostRepo.AssertExpectations(t)
 	})
 }
