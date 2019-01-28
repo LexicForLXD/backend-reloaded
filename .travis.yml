@@ -6,9 +6,7 @@ jobs:
     - stage: tests
       language: go
       go:
-        - "1.x"
-        - "1.10.x"
-        - master
+        - 'stable'
       services:
         - postgresql
       before_install:
