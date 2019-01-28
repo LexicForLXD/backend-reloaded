@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/lexicforlxd/backend-reloaded/host"
 	"github.com/lexicforlxd/backend-reloaded/models"
 )
@@ -23,7 +22,6 @@ func NewHostResolver(h host.Usecase) HostResolver {
 // mutations
 func (r *HostResolver) CreateHost(ctx context.Context, hostReq models.HostReq) (*models.Host, error) {
 	host := &models.Host{
-		ID:      uuid.New().String(),
 		Name:    *hostReq.Name,
 		Address: *hostReq.Address,
 	}

@@ -8,16 +8,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/google/uuid"
 	"github.com/lexicforlxd/backend-reloaded/host"
 	"github.com/lexicforlxd/backend-reloaded/models"
 	_restUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/rest"
 )
-
-// ResponseError represent the reseponse error struct
-type ResponseError struct {
-	Message string `json:"message"`
-}
 
 type HostHandler struct {
 	HostUsecase host.Usecase
@@ -70,7 +64,6 @@ func (h *HostHandler) CreateHost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	host := data.Host
-	host.ID = uuid.New().String()
 
 	//TODO Check for Host with same IP
 

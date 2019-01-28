@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/lexicforlxd/backend-reloaded/host"
 	"github.com/lexicforlxd/backend-reloaded/models"
 )
@@ -26,6 +27,8 @@ func (h *hostUsecase) Store(ctx context.Context, host *models.Host) (*models.Hos
 	if host.Password != "" {
 		fmt.Println("auth with lxd")
 	}
+
+	host.ID = uuid.New().String()
 	if err := h.hostRepo.Store(ctx, host); err != nil {
 		return nil, err
 	}
