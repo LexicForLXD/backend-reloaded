@@ -6,19 +6,15 @@ jobs:
     - stage: tests
       language: go
       go:
-        - 'stable'
-      services:
-        - postgresql
+        - "stable"
       before_install:
-        - cp .env.travis .env
         # Download the binary to bin folder in $GOPATH
         - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
         # Make the binary executable
         - chmod +x $GOPATH/bin/dep
       install:
-        - make prepare
+        - dep ensure
       before_script:
-        - psql -c 'create database travis_lexic_test;' -U postgres
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
