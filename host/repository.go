@@ -9,6 +9,8 @@ import (
 type Repository interface {
 	Fetch(ctx context.Context, limit int, offset int) ([]*models.Host, error)
 	GetByID(ctx context.Context, ID string) (*models.Host, error)
+	GetByAddress(ctx context.Context, address string) (*models.Host, error)
+	GetByName(ctx context.Context, name string) (*models.Host, error)
 	Update(ctx context.Context, host *models.Host) error
 	Store(ctx context.Context, host *models.Host) error
 	Delete(ctx context.Context, id string) error

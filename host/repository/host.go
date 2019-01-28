@@ -31,7 +31,22 @@ func (hr *hostRepository) GetByID(ctx context.Context, ID string) (*models.Host,
 	if err := hr.db.Where("id = ?", ID).First(&host).Error; err != nil {
 		return nil, err
 	}
+	return &host, nil
+}
 
+func (hr *hostRepository) GetByAddress(ctx context.Context, address string) (*models.Host, error) {
+	host := models.Host{}
+	if err := hr.db.Where("address = ?", address).First(&host).Error; err != nil {
+		return nil, err
+	}
+	return &host, nil
+}
+
+func (hr *hostRepository) GetByName(ctx context.Context, name string) (*models.Host, error) {
+	host := models.Host{}
+	if err := hr.db.Where("name = ?", name).First(&host).Error; err != nil {
+		return nil, err
+	}
 	return &host, nil
 }
 

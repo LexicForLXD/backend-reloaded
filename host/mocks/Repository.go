@@ -49,6 +49,29 @@ func (_m *Repository) Fetch(ctx context.Context, limit int, offset int) ([]*mode
 	return r0, r1
 }
 
+// GetByAddress provides a mock function with given fields: ctx, address
+func (_m *Repository) GetByAddress(ctx context.Context, address string) (*models.Host, error) {
+	ret := _m.Called(ctx, address)
+
+	var r0 *models.Host
+	if rf, ok := ret.Get(0).(func(context.Context, string) *models.Host); ok {
+		r0 = rf(ctx, address)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Host)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, address)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: ctx, ID
 func (_m *Repository) GetByID(ctx context.Context, ID string) (*models.Host, error) {
 	ret := _m.Called(ctx, ID)
@@ -65,6 +88,29 @@ func (_m *Repository) GetByID(ctx context.Context, ID string) (*models.Host, err
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByName provides a mock function with given fields: ctx, name
+func (_m *Repository) GetByName(ctx context.Context, name string) (*models.Host, error) {
+	ret := _m.Called(ctx, name)
+
+	var r0 *models.Host
+	if rf, ok := ret.Get(0).(func(context.Context, string) *models.Host); ok {
+		r0 = rf(ctx, name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Host)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, name)
 	} else {
 		r1 = ret.Error(1)
 	}
