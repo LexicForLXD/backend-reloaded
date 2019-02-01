@@ -18,6 +18,7 @@ import (
 	_hostUsecase "github.com/lexicforlxd/backend-reloaded/host/usecase"
 	"github.com/lexicforlxd/backend-reloaded/models"
 	"github.com/lexicforlxd/backend-reloaded/resolvers"
+	_graphUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/graphql"
 )
 
 const defaultPort = "8080"
@@ -45,7 +46,7 @@ func Routes() *chi.Mux {
 		r.Mount("/hosts", _hostRest.NewHostHandler(hostUsecase))
 	})
 
-	router.Handle("/query", handler.GraphQL(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.NewResolver(hostUsecase)})))
+	router.Handle("/query", handler.GraphQL(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.NewResolver(hostUsecase)}), handler.ErrorPresenter(_graphUtil.CustomErrorHandler)))
 	return router
 }
 

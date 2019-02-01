@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/lexicforlxd/backend-reloaded/lexicError"
+	"github.com/pkg/errors"
 )
 
 // ErrResponse renderer type for handling all sorts of errors.
@@ -20,18 +22,33 @@ type ErrResponse struct {
 	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
 }
 
+func NewErrorResponse(err error) render.Renderer {
+
+	switch errT := errors.Cause(err).(type) {
+
+	case *lexicError.LexicError:
+		return &ErrResponse{
+			Err:            errT,
+			HTTPStatusCode: errT.HTTPStatusCode,
+			StatusText:     errT.StatusText,
+			AppCode:        errT.AppCode,
+			ErrorText:      errors.Cause(errT).Error(),
+		}
+
+	default:
+		return &ErrResponse{
+			Err:            err,
+			HTTPStatusCode: 500,
+			StatusText:     err.Error(),
+			ErrorText:      errors.Cause(err).Error(),
+		}
+	}
+
+}
+
 func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
-}
-
-func ErrInvalidRequest(err error) render.Renderer {
-	return &ErrResponse{
-		Err:            err,
-		HTTPStatusCode: 400,
-		StatusText:     "Invalid request.",
-		ErrorText:      err.Error(),
-	}
 }
 
 func ErrRender(err error) render.Renderer {
@@ -42,5 +59,3 @@ func ErrRender(err error) render.Renderer {
 		ErrorText:      err.Error(),
 	}
 }
-
-var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, StatusText: "Resource not found."}

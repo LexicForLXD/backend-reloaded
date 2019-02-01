@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/lexicforlxd/backend-reloaded/lexicError"
 	"github.com/go-chi/render"
 
 	"github.com/lexicforlxd/backend-reloaded/models"
@@ -19,11 +20,11 @@ type HostListResponse []*HostPayload
 // Bind will run after the unmarshalling is complete
 func (h *HostPayload) Bind(r *http.Request) error {
 	if h.Name == "" {
-		return errors.New("missing required name field")
+		return lexicError.NewWrongInputError(errors.New("missing required name field"))
 	}
 
 	if h.Address == "" {
-		return errors.New("missing required address field")
+		return lexicError.NewWrongInputError(errors.New("missing required address field"))
 	}
 
 	return nil

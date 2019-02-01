@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -9,6 +10,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/lexicforlxd/backend-reloaded/host"
+	"github.com/lexicforlxd/backend-reloaded/lexicError"
 	"github.com/lexicforlxd/backend-reloaded/models"
 	_restUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/rest"
 )
@@ -42,10 +44,11 @@ func (h *HostHandler) HostCtx(next http.Handler) http.Handler {
 		ctx := r.Context()
 		if hostID := chi.URLParam(r, "hostID"); hostID != "" {
 			if host, err = h.HostUsecase.Show(ctx, hostID); err != nil {
-			return
-		}
-		if err != nil {
-			render.Render(w, r, _restUtil.ErrNotFound)
+				render.Render(w, r, _restUtil.NewErrorResponse(err))
+				return
+			}
+		} else {
+			render.Render(w, r, _restUtil.NewErrorResponse(lexicError.NewNotFoundError(errors.New("HostID not specified"))))
 			return
 		}
 
@@ -57,17 +60,16 @@ func (h *HostHandler) HostCtx(next http.Handler) http.Handler {
 func (h *HostHandler) CreateHost(w http.ResponseWriter, r *http.Request) {
 	data := &HostPayload{}
 	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, _restUtil.ErrInvalidRequest(err))
+		render.Render(w, r, _restUtil.NewErrorResponse(err))
 		return
 	}
 
 	host := data.Host
 
-	//TODO Check for Host with same IP
-
 	host, err := h.HostUsecase.Store(r.Context(), host)
 	if err != nil {
-		render.Render(w, r, _restUtil.ErrRender(err))
+		render.Render(w, r, _restUtil.NewErrorResponse(err))
+		return
 	}
 
 	render.Status(r, http.StatusCreated)
@@ -80,6 +82,7 @@ func (h *HostHandler) FetchHosts(w http.ResponseWriter, r *http.Request) {
 	hosts, err := h.HostUsecase.Fetch(r.Context(), limit, offset)
 	if err != nil {
 		render.Render(w, r, _restUtil.ErrRender(err))
+		return
 	}
 
 	if err := render.RenderList(w, r, NewHostListResponse(hosts)); err != nil {
@@ -103,16 +106,20 @@ func (h *HostHandler) UpdateHost(w http.ResponseWriter, r *http.Request) {
 	//TODO Check for Host with same IP
 	data := &HostPayload{Host: host}
 	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, _restUtil.ErrInvalidRequest(err))
+		render.Render(w, r, _restUtil.NewErrorResponse(err))
 		return
 	}
 	host = data.Host
 	host, err := h.HostUsecase.Update(r.Context(), host)
 	if err != nil {
-		render.Render(w, r, _restUtil.ErrRender(err))
+		render.Render(w, r, _restUtil.NewErrorResponse(err))
+		return
 	}
 
-	render.Render(w, r, NewHostResponse(host))
+	if err := render.Render(w, r, NewHostResponse(host)); err != nil {
+		render.Render(w, r, _restUtil.ErrRender(err))
+		return
+	}
 }
 
 // DeleteArticle removes an existing Article from our persistent store.
@@ -124,7 +131,7 @@ func (h *HostHandler) DeleteHost(w http.ResponseWriter, r *http.Request) {
 	host := r.Context().Value("host").(*models.Host)
 
 	if err := h.HostUsecase.Delete(r.Context(), host.ID); err != nil {
-		render.Render(w, r, _restUtil.ErrInvalidRequest(err))
+		render.Render(w, r, _restUtil.NewErrorResponse(err))
 		return
 	}
 
