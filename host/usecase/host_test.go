@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetByID(t *testing.T) {
+func TestShow(t *testing.T) {
 	mockHostRepo := new(mocks.Repository)
 	mockHost := models.Host{
 		Name:    "Hello",
@@ -23,7 +23,7 @@ func TestGetByID(t *testing.T) {
 		mockHostRepo.On("GetByID", mock.Anything, mock.AnythingOfType("string")).Return(&mockHost, nil).Once()
 		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
-		a, err := u.GetByID(context.TODO(), mockHost.ID)
+		a, err := u.Show(context.TODO(), mockHost.ID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -33,7 +33,7 @@ func TestGetByID(t *testing.T) {
 
 		u := NewHostUsecase(mockHostRepo, time.Second*2)
 
-		a, err := u.GetByID(context.TODO(), mockHost.ID)
+		a, err := u.Show(context.TODO(), mockHost.ID)
 
 		assert.Error(t, err)
 		assert.Nil(t, a)
