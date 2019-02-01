@@ -42,7 +42,7 @@ func (r *HostResolver) CreateHost(ctx context.Context, hostReq models.HostReq) (
 }
 
 func (r *HostResolver) UpdateHost(ctx context.Context, id string, hostReq models.HostReq) (*models.Host, error) {
-	host, err := r.hostUsecase.GetByID(ctx, id)
+	host, err := r.hostUsecase.Show(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (r *HostResolver) Hosts(ctx context.Context, limit *int, offset *int) ([]*m
 	return hosts, nil
 }
 func (r *HostResolver) Host(ctx context.Context, id string) (*models.Host, error) {
-	host, err := r.hostUsecase.GetByID(ctx, id)
+	host, err := r.hostUsecase.Show(ctx, id)
 	if err != nil {
 		return nil, err
 	}

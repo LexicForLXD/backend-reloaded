@@ -41,9 +41,7 @@ func (h *HostHandler) HostCtx(next http.Handler) http.Handler {
 		var err error
 		ctx := r.Context()
 		if hostID := chi.URLParam(r, "hostID"); hostID != "" {
-			host, err = h.HostUsecase.GetByID(ctx, hostID)
-		} else {
-			render.Render(w, r, _restUtil.ErrNotFound)
+			if host, err = h.HostUsecase.Show(ctx, hostID); err != nil {
 			return
 		}
 		if err != nil {

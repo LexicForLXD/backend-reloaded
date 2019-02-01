@@ -91,7 +91,7 @@ func (h *hostUsecase) Update(ctx context.Context, host *models.Host) (*models.Ho
 	return host, nil
 }
 
-func (h *hostUsecase) GetByID(ctx context.Context, ID string) (*models.Host, error) {
+func (h *hostUsecase) Show(ctx context.Context, ID string) (*models.Host, error) {
 	host, err := h.hostRepo.GetByID(ctx, ID)
 	if err != nil {
 		return nil, err
