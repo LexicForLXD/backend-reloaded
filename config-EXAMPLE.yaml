@@ -1,0 +1,16 @@
+rollbar:
+  codeVersion: "v0.0.1" # optional Git hash/branch/tag (required for GitHub integration)
+  environment: "production" # defaults to "development"
+  serverRoot: "github.com/lexicforlxd/backend-reloaded" # path of project (required for GitHub integration and non-project stacktrace collapsing)
+  token: "" # personal access token
+
+database:
+  host: "localhost"
+  user: "lexic"
+  name: "lexic"
+  password: "password"
+
+tls:
+  keyFile:  "key.pem" # path to private key
+  certFile: "cert.pem" # path to public cert
+

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -8,6 +10,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/handler"
+	"github.com/fsnotify/fsnotify"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -19,6 +22,7 @@ import (
 	"github.com/lexicforlxd/backend-reloaded/models"
 	"github.com/lexicforlxd/backend-reloaded/resolvers"
 	_graphUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/graphql"
+	"github.com/spf13/viper"
 )
 
 const defaultPort = "8080"
@@ -48,6 +52,36 @@ func Routes() *chi.Mux {
 
 	router.Handle("/query", handler.GraphQL(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.NewResolver(hostUsecase)}), handler.ErrorPresenter(_graphUtil.CustomErrorHandler)))
 	return router
+}
+
+func init() {
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+		readCerts()
+	})
+
+	readCerts()
+	viper.SetDefault("rollbar.codeVersion", "v1")
+	viper.SetDefault("rollbar.serverRoot", "github.com/lexicforlxd/backend-reloaded")
+	viper.SetDefault("rollbar.environment", "development")
+	viper.SetDefault("database.host", "localhost")
+}
+
+func readCerts() {
+	cert, err := ioutil.ReadFile(viper.GetString("tls.certFile"))
+	key, err := ioutil.ReadFile(viper.GetString("tls.keyFile"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	viper.Set("tls.cert", string(cert))
+	viper.Set("tls.key", string(key))
 }
 
 func main() {

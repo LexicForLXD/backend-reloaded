@@ -26,6 +26,16 @@ func NewLXDConnectionError(err error) *LexicError {
 	}
 }
 
+func NewLXDError(err error) *LexicError {
+	return &LexicError{
+		Err:            err,
+		HTTPStatusCode: 500,
+		StatusText:     "LXD error",               // user-level status message
+		AppCode:        503,                       // application-specific error code
+		ErrorText:      errors.Cause(err).Error(), // application-level error message, for debugging
+	}
+}
+
 func NewInternalServerError(err error) *LexicError {
 	return &LexicError{
 		Err:            err,
