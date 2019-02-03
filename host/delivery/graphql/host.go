@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lexicforlxd/backend-reloaded/host"
 	"github.com/lexicforlxd/backend-reloaded/models"
@@ -30,7 +29,7 @@ func (r *HostResolver) CreateHost(ctx context.Context, hostReq models.HostReq) (
 		host.Desc = *hostReq.Desc
 	}
 	if hostReq.Password != nil {
-		fmt.Println("auth with lxd")
+		host.Password = *hostReq.Password
 	}
 
 	host, err := r.hostUsecase.Store(ctx, host)

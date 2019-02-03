@@ -2,15 +2,16 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 	"time"
 
 	"github.com/lexicforlxd/backend-reloaded/lexicError"
+	"github.com/spf13/viper"
 
 	"github.com/google/uuid"
 	"github.com/lexicforlxd/backend-reloaded/host"
 	"github.com/lexicforlxd/backend-reloaded/models"
+	lxd "github.com/lxc/lxd/client"
+	"github.com/lxc/lxd/shared/api"
 	"github.com/pkg/errors"
 )
 
@@ -31,16 +32,34 @@ func (h *hostUsecase) Store(ctx context.Context, host *models.Host) (*models.Hos
 
 	if host, _ := h.hostRepo.GetByAddress(ctx, host.Address); host != nil {
 		return nil, lexicError.NewWrongInputError(errors.New("Host with same address already in database"))
-		// return nil, errors.Wrap(errors.New("Host with same address already in database"), "InvalidRequest")
 	}
 	if host, _ := h.hostRepo.GetByName(ctx, host.Name); host != nil {
 		return nil, lexicError.NewWrongInputError(errors.New("Host with same name already in database"))
 	}
 
 	if host.Password != "" {
-		fmt.Println("auth with lxd")
+		args := &lxd.ConnectionArgs{
+			TLSClientCert:      viper.GetString("tls.cert"),
+			TLSClientKey:       viper.GetString("tls.key"),
+			InsecureSkipVerify: true,
 		}
 
+		c, err := lxd.ConnectLXD(host.Address, args)
+		if err != nil {
+			return nil, lexicError.NewLXDConnectionError(err)
+		}
+
+		if err := c.CreateCertificate(api.CertificatesPost{
+			CertificatePut: api.CertificatePut{
+				Name: "name",
+				Type: "client",
+			},
+			Password: "password",
+		}); err != nil && err.Error() != "Certificate already in trust store" {
+			return nil, lexicError.NewLXDError(err)
+		}
+
+	}
 
 	host.ID = uuid.New().String()
 	if err := h.hostRepo.Store(ctx, host); err != nil {
