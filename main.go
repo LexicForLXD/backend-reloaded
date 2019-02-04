@@ -22,6 +22,7 @@ import (
 	"github.com/lexicforlxd/backend-reloaded/models"
 	"github.com/lexicforlxd/backend-reloaded/resolvers"
 	_graphUtil "github.com/lexicforlxd/backend-reloaded/util/delivery/graphql"
+	rollbar "github.com/rollbar/rollbar-go"
 	"github.com/spf13/viper"
 )
 
@@ -72,6 +73,17 @@ func init() {
 	viper.SetDefault("rollbar.serverRoot", "github.com/lexicforlxd/backend-reloaded")
 	viper.SetDefault("rollbar.environment", "development")
 	viper.SetDefault("database.host", "localhost")
+
+	initRollbar()
+}
+
+func initRollbar() {
+	rollbar.SetToken(viper.GetString("rollbar.token"))
+	rollbar.SetEnvironment(viper.GetString("rollbar.environment")) // defaults to "development"
+	rollbar.SetCodeVersion(viper.GetString("rollbar.codeVersion")) // optional Git hash/branch/tag (required for GitHub integration)
+	// rollbar.SetServerHost("web.1")                       // optional override; defaults to hostname
+	rollbar.SetServerRoot(viper.GetString("rollbar.serverRoot")) // path of project (required for GitHub integration and non-project stacktrace collapsing)
+
 }
 
 func readCerts() {
@@ -128,6 +140,8 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
+	rollbar.Wait()
 
 	log.Printf("connect to http://localhost:%s/query ", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
