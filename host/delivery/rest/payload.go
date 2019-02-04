@@ -4,15 +4,13 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/lexicforlxd/backend-reloaded/lexicError"
 	"github.com/go-chi/render"
-
+	"github.com/lexicforlxd/backend-reloaded/lexicError"
 	"github.com/lexicforlxd/backend-reloaded/models"
 )
 
 type HostPayload struct {
 	*models.Host
-	// containers *[]models.Container
 }
 
 type HostListResponse []*HostPayload
@@ -32,9 +30,11 @@ func (h *HostPayload) Bind(r *http.Request) error {
 
 // Render will run before the marshalling
 func (h *HostPayload) Render(w http.ResponseWriter, r *http.Request) error {
-	h.Password = ""
-	if h.Containers == nil {
-		h.Containers = []models.Container{}
+	if h != nil {
+		h.Password = ""
+		if h.Containers == nil {
+			h.Containers = []models.Container{}
+		}
 	}
 	return nil
 }
