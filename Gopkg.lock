@@ -52,6 +52,14 @@
   version = "v3.0"
 
 [[projects]]
+  digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
+  name = "github.com/fsnotify/fsnotify"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  version = "v1.4.7"
+
+[[projects]]
   digest = "1:631757aef84dd471e4ba8242ac6affcccfc2c4c6d9c8c45e47b0d8fe8fd82de1"
   name = "github.com/go-chi/chi"
   packages = [
@@ -104,6 +112,25 @@
   pruneopts = "UT"
   revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
   version = "v0.5.0"
+
+[[projects]]
+  digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
+  name = "github.com/hashicorp/hcl"
+  packages = [
+    ".",
+    "hcl/ast",
+    "hcl/parser",
+    "hcl/printer",
+    "hcl/scanner",
+    "hcl/strconv",
+    "hcl/token",
+    "json/parser",
+    "json/scanner",
+    "json/token",
+  ]
+  pruneopts = "UT"
+  revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:7e63b12cdd7bef2c411d736cb67e28134d39f5d236aa1bfb8f3d55e3ad709eca"
@@ -178,6 +205,30 @@
   revision = "fba7538d485ef2a9692211d693cfa6e068ff0364"
 
 [[projects]]
+  digest = "1:c568d7727aa262c32bdf8a3f7db83614f7af0ed661474b24588de635c20024c7"
+  name = "github.com/magiconair/properties"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c2353362d570a7bfa228149c62842019201cfb71"
+  version = "v1.8.0"
+
+[[projects]]
+  digest = "1:53bc4cd4914cd7cd52139990d5170d6dc99067ae31c56530621b18b35fc30318"
+  name = "github.com/mitchellh/mapstructure"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
+  version = "v1.1.2"
+
+[[projects]]
+  digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
+  name = "github.com/pelletier/go-toml"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -208,6 +259,49 @@
   pruneopts = "UT"
   revision = "d450a931d7a085523b60f0f7c98487333a8ce5fa"
   version = "v1.0.2"
+
+[[projects]]
+  digest = "1:3e39bafd6c2f4bf3c76c3bfd16a2e09e016510ad5db90dc02b88e2f565d6d595"
+  name = "github.com/spf13/afero"
+  packages = [
+    ".",
+    "mem",
+  ]
+  pruneopts = "UT"
+  revision = "f4711e4db9e9a1d3887343acb72b2bbfc2f686f5"
+  version = "v1.2.1"
+
+[[projects]]
+  digest = "1:08d65904057412fc0270fc4812a1c90c594186819243160dc779a402d4b6d0bc"
+  name = "github.com/spf13/cast"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8c9545af88b134710ab1cd196795e7f2388358d7"
+  version = "v1.3.0"
+
+[[projects]]
+  digest = "1:68ea4e23713989dc20b1bded5d9da2c5f9be14ff9885beef481848edd18c26cb"
+  name = "github.com/spf13/jwalterweatherman"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "4a4406e478ca629068e7768fc33f3f044173c0a6"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
+
+[[projects]]
+  digest = "1:de37e343c64582d7026bf8ab6ac5b22a72eac54f3a57020db31524affed9f423"
+  name = "github.com/spf13/viper"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6d33b5a963d922d182c91e8a1c88d81fd150cfd4"
+  version = "v1.3.1"
 
 [[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
@@ -253,6 +347,18 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:2773e4e922e5af534775962ffef08770b8114e177590f7605886528d37417105"
+  name = "go.uber.org/dig"
+  packages = [
+    ".",
+    "internal/digreflect",
+    "internal/dot",
+  ]
+  pruneopts = "UT"
+  revision = "7ff117f761a3f1b3eb521945c17a1091438eb6de"
+  version = "v1.7.0"
+
+[[projects]]
   branch = "master"
   digest = "1:0e2b280c6e49c21a52f90b26547754d521809ea4b684058aea2aab7f083a7939"
   name = "golang.org/x/crypto"
@@ -286,9 +392,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:68a4638398cf8c864a6aa50c8853ebe7935f939aa3acf7e44cb35b67852e9fef"
+  digest = "1:f5987dbdcc6c3fb59ea5d4e4344a009308608b22c0ba24ef74c4f1e2a6032904"
   name = "golang.org/x/sys"
-  packages = ["windows"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
   revision = "302c3dd5f1cc82baae8e44d9c3178e89b6e2b345"
 
@@ -407,6 +516,7 @@
     "github.com/99designs/gqlgen/graphql",
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
+    "github.com/fsnotify/fsnotify",
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/go-chi/render",
@@ -417,11 +527,13 @@
     "github.com/lxc/lxd/shared/api",
     "github.com/pkg/errors",
     "github.com/rollbar/rollbar-go",
+    "github.com/spf13/viper",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "github.com/vektah/gqlparser/gqlerror",
+    "go.uber.org/dig",
     "golang.org/x/crypto/bcrypt",
     "gopkg.in/DATA-DOG/go-sqlmock.v1",
   ]
