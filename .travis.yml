@@ -15,7 +15,7 @@ jobs:
       install:
         - make prepare
       before_script:
-        - cp ./config-TRAVIS.yaml ./config.yaml
+        - cp ./config/config-TRAVIS.yaml ./config/config.yaml
         - make ci=1 tls
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
